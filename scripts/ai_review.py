@@ -3,7 +3,7 @@ import sys
 import httpx
 
 def review_diff(diff: str) -> str:
-    api_key = os.environ["AIzaSyCOZaO36QnTASTVGcy1XJurdGxk9Z6ftDs"]
+    api_key = os.environ["GEMINI_API_KEY"]
 
     prompt = f"""You are a senior software engineer doing a code review.
 Review the following git diff and provide feedback on:
