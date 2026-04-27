@@ -1,0 +1,48 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-test-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r app/requirements.txt
+
+      - name: Lint with ruff
+        run: |
+          pip install ruff
+          ruff check app/
+
+      - name: Run tests with coverage
+        run: |
+          pip install pytest-cov
+          pytest app/ --cov=app --cov-report=term-missing
+
+      - name: Build Docker image
+        run: docker build -t ghcr.io/${{ github.repository }}/todo-app:${{ github.sha }} .
+
+      - name: Log in to GHCR
+        if: github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Docker image
+        if: github.ref == 'refs/heads/main'
+        run: docker push ghcr.io/${{ github.repository }}/todo-app:${{ github.sha }}
