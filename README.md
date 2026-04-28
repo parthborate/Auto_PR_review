@@ -27,15 +27,24 @@ The app itself is a small Flask todo API — it exists only as a target for the 
 ## 🏗️ Architecture
 
 ~~~
-┌─────────────────────────────────┐     ┌──────────────────────────────────┐
-│      Workflow 1: ci.yml         │     │    Workflow 2: ai-review.yml      │
-│      Trigger: git push          │     │    Trigger: pull request opened   │
-│                                 │     │                                   │
-│  1. Lint (ruff)                 │     │  1. Fetch diff (gh pr diff)       │
-│  2. Unit tests (pytest)         │     │  2. Send to Gemini 2.0 Flash      │
-│  3. Build Docker image          │     │  3. Get AI review back            │
-│  4. Push to ghcr.io             │     │  4. Post as PR comment            │
-└─────────────────────────────────┘     └──────────────────────────────────┘
+## Architecture
+
+```mermaid
+flowchart LR
+  subgraph W1["Workflow 1 — ci.yml (git push)"]
+    A[git push] --> B[Lint - ruff]
+    B --> C[Unit tests - pytest]
+    C --> D[Docker build]
+    D --> E[Push to ghcr.io]
+  end
+
+  subgraph W2["Workflow 2 — ai-review.yml (pull request)"]
+    F[PR opened] --> G[Fetch PR diff]
+    G --> H[Build prompt]
+    H --> I[Call Gemini API]
+    I --> J[Post PR comment]
+  end
+```
 ~~~
 
 **Data flow for the AI reviewer:**
