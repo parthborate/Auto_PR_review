@@ -7,8 +7,11 @@
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Cost](https://img.shields.io/badge/Cost-$0-brightgreen?style=for-the-badge)
 
-> A GitHub Actions pipeline that automatically reviews every pull request using **Gemini 2.0 Flash**, flags bugs and security risks, and posts the review as a PR comment — at zero cost.
-
+> Ever wished you had a senior engineer available 24/7 to review every pull request the moment it lands — catching bugs, spotting security risks, and flagging unclear logic before anyone even hits "merge"? That's exactly what this project does, at zero cost.
+>
+> This repo wires together **GitHub Actions** and **Google Gemini 2.0 Flash** to build a fully automated AI code reviewer. Every time a pull request is opened, a workflow spins up, grabs the exact lines that changed, sends them to Gemini with a structured review prompt, and posts the AI's feedback directly as a PR comment — all within about 60 seconds.
+>
+> No paid services. No cloud accounts. No credit card. The entire pipeline runs on GitHub's free Actions tier and Google AI Studio's free Gemini quota. It's the same concept behind commercial tools like CodeRabbit and GitHub Copilot Reviews — built from scratch, fully transparent, and completely under your control.
 ---
 
 ## ✨ What this project does
