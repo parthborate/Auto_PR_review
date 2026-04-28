@@ -1,7 +1,3 @@
-PR opened → gh pr diff → stdin → ai_review.py → Gemini API → stdout → review.txt → gh pr comment
-~~~
-~~~
-Here's the complete README without any mermaid — copy all of it:
 # 🤖 Auto PR Review — AI-Powered CI/CD Pipeline
 
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
