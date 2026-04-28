@@ -37,25 +37,66 @@ The app itself is a small Flask todo API — it exists only as a target for the 
 ~~~
 PR opened → gh pr diff → stdin → ai_review.py → Gemini API → stdout → review.txt → gh pr comment
 ~~~
+~~~
+Here's the complete README without any mermaid — copy all of it:
+# 🤖 Auto PR Review — AI-Powered CI/CD Pipeline
+
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
+![Google Gemini](https://img.shields.io/badge/Google_Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Cost](https://img.shields.io/badge/Cost-$0-brightgreen?style=for-the-badge)
+
+> A GitHub Actions pipeline that automatically reviews every pull request using **Gemini 2.0 Flash**, flags bugs and security risks, and posts the review as a PR comment — at zero cost.
+
+---
+
+## ✨ What this project does
+
+This repo contains two GitHub Actions workflows:
+
+| Workflow | Trigger | What it does |
+|---|---|---|
+| `ci.yml` | Every push to `main` | Lint → Test → Build Docker image → Push to GHCR |
+| `ai-review.yml` | Every pull request | Fetch diff → Send to Gemini → Post AI review as PR comment |
+
+The app itself is a small Flask todo API — it exists only as a target for the pipeline to lint, test, and containerize.
+
+---
+
+## 🏗️ Architecture
+
+Data flow for the AI reviewer:
+
+    PR opened → gh pr diff → stdin → ai_review.py → Gemini API → stdout → review.txt → gh pr comment
+
+Two workflows run in parallel:
+
+    Workflow 1 — ci.yml (triggered by git push)
+    git push → Lint (ruff) → Unit tests (pytest) → Docker build → Push to ghcr.io
+
+    Workflow 2 — ai-review.yml (triggered by pull request)
+    PR opened → Fetch diff → Build prompt → Call Gemini API → Post PR comment
 
 ---
 
 ## 📁 Project structure
 
-~~~
-Auto_PR_review/
-├── app/
-│   ├── app.py              # Flask todo REST API
-│   ├── requirements.txt    # Python dependencies
-│   └── test_app.py         # pytest unit tests
-├── scripts/
-│   └── ai_review.py        # Fetches diff, calls Gemini, prints review
-├── Dockerfile              # Containerizes the Flask app
-└── .github/
-    └── workflows/
-        ├── ci.yml          # Lint → Test → Build → Push pipeline
-        └── ai-review.yml   # PR diff → Gemini → PR comment
-~~~
+    Auto_PR_review/
+    ├── app/
+    │   ├── app.py              # Flask todo REST API
+    │   ├── requirements.txt    # Python dependencies
+    │   └── test_app.py         # pytest unit tests
+    ├── scripts/
+    │   └── ai_review.py        # Fetches diff, calls Gemini, prints review
+    ├── Dockerfile              # Containerizes the Flask app
+    └── .github/
+        └── workflows/
+            ├── ci.yml          # Lint → Test → Build → Push pipeline
+            └── ai-review.yml   # PR diff → Gemini → PR comment
+
+---
 
 ## 🛠️ Tech stack
 
@@ -85,14 +126,12 @@ Auto_PR_review/
 
 ### Step 1 — Clone and set up
 
-```bash
-git clone https://github.com/YOUR_USERNAME/Auto_PR_review.git
-cd Auto_PR_review
+    git clone https://github.com/YOUR_USERNAME/Auto_PR_review.git
+    cd Auto_PR_review
 
-python -m venv venv
-source venv/bin/activate      # Windows: venv\Scripts\activate
-pip install -r app/requirements.txt
-```
+    python -m venv venv
+    source venv/bin/activate      # Windows: venv\Scripts\activate
+    pip install -r app/requirements.txt
 
 ---
 
@@ -115,12 +154,9 @@ pip install -r app/requirements.txt
 
 ### Step 4 — Trigger the AI reviewer
 
-```bash
-git checkout -b my-feature
-# make any change to a file
-git add . && git commit -m "My feature"
-gh pr create --title "Test AI reviewer" --body "Testing"
-```
+    git checkout -b my-feature
+    git add . && git commit -m "My feature"
+    gh pr create --title "Test AI reviewer" --body "Testing"
 
 > ⏱️ Within ~60 seconds, Gemini's review will appear as a comment on your PR.
 
@@ -128,18 +164,13 @@ gh pr create --title "Test AI reviewer" --body "Testing"
 
 ### Step 5 — Run locally (optional)
 
-```bash
-# Run the app
-docker build -t todo-app .
-docker run -p 5001:5000 todo-app
-# Visit http://localhost:5001/todos
+    docker build -t todo-app .
+    docker run -p 5001:5000 todo-app
+    # Visit http://localhost:5001/todos
 
-# Run tests
-pytest app/ --cov=app --cov-report=term-missing
+    pytest app/ --cov=app --cov-report=term-missing
 
-# Lint
-ruff check app/
-```
+    ruff check app/
 
 ---
 
@@ -147,27 +178,11 @@ ruff check app/
 
 The core logic lives in `scripts/ai_review.py`:
 
-```python
-# 1. Read the diff from stdin (piped from gh pr diff)
-diff = sys.stdin.read()
-
-# 2. Build a prompt with the diff embedded
-prompt = f"""You are a senior software engineer doing a code review...
---- DIFF ---
-{diff}
-"""
-
-# 3. Send to Gemini and get the review back
-response = httpx.post(
-    f"https://generativelanguage.googleapis.com/.../gemini-2.0-flash:generateContent?key={api_key}",
-    json={"contents": [{"parts": [{"text": prompt}]}]},
-)
-
-# 4. Print the review — saved to review.txt by the workflow
-print(response.json()["candidates"][0]["content"]["parts"][0]["text"])
-```
-
-The workflow then posts `review.txt` as a PR comment using `gh pr comment`.
+1. Read the diff from stdin — piped in from `gh pr diff`
+2. Build a prompt with the diff embedded at the bottom
+3. POST the prompt to Gemini 2.0 Flash via the REST API
+4. Print the review — the workflow saves it to `review.txt`
+5. The workflow posts `review.txt` as a PR comment using `gh pr comment`
 
 ---
 
