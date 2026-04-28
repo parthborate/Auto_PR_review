@@ -26,9 +26,6 @@ The app itself is a small Flask todo API — it exists only as a target for the 
 
 ## 🏗️ Architecture
 
-~~~
-## Architecture
-
 ```mermaid
 flowchart LR
   subgraph W1["Workflow 1 — ci.yml (git push)"]
