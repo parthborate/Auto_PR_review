@@ -7,11 +7,11 @@
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Cost](https://img.shields.io/badge/Cost-$0-brightgreen?style=for-the-badge)
 
-> Ever wished you had a senior engineer available 24/7 to review every pull request the moment it lands — catching bugs, spotting security risks, and flagging unclear logic before anyone even hits "merge"? That's exactly what this project does, at zero cost.
+> I built this because code review is one of those things every team knows matters, but never has enough time for. PRs sit open for hours waiting for someone to look at them. Reviewers get fatigued and start rubber-stamping changes. Bugs slip through not because nobody cared, but because everyone was busy.
 >
-> This repo wires together **GitHub Actions** and **Google Gemini 2.0 Flash** to build a fully automated AI code reviewer. Every time a pull request is opened, a workflow spins up, grabs the exact lines that changed, sends them to Gemini with a structured review prompt, and posts the AI's feedback directly as a PR comment — all within about 60 seconds.
+> So I wired up GitHub Actions and Google Gemini 2.0 Flash to do the first pass automatically. Every time a pull request opens, it grabs the diff, sends it to Gemini with a review prompt, and posts the feedback as a PR comment — usually within 60 seconds. It catches the obvious stuff: hardcoded secrets, logical errors, sketchy patterns that look fine at a glance but aren't.
 >
-> No paid services. No cloud accounts. No credit card. The entire pipeline runs on GitHub's free Actions tier and Google AI Studio's free Gemini quota. It's the same concept behind commercial tools like CodeRabbit and GitHub Copilot Reviews — built from scratch, fully transparent, and completely under your control.
+> It's not meant to replace human reviewers. It's meant to make their job easier by handling the low-hanging fruit so they can focus on the stuff that actually needs judgement. And it costs nothing — the whole thing runs on GitHub's free Actions tier and Google's free Gemini quota.
 ---
 
 ## ✨ What this project does
