@@ -1,9 +1,10 @@
 import os
 import sys
+import time
 import httpx
 
 def review_diff(diff: str) -> str:
-    api_key = os.environ["AIzaSyCOZaO36QnTASTVGcy1XJurdGxk9Z6ftDs"]
+    api_key = os.environ["GEMINI_API_KEY"]
 
     prompt = f"""You are a senior software engineer doing a code review.
 Review the following git diff and provide feedback on:
@@ -18,13 +19,18 @@ Do NOT rewrite the code unless asked.
 {diff}
 """
 
-    response = httpx.post(
-        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}",
-        json={
-            "contents": [{"parts": [{"text": prompt}]}]
-        },
-        timeout=60,
-    )
+    for attempt in range(3):
+        response = httpx.post(
+            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}",
+            json={"contents": [{"parts": [{"text": prompt}]}]},
+            timeout=60,
+        )
+        if response.status_code == 429:
+            print(f"Rate limited, waiting 30s (attempt {attempt + 1}/3)...")
+            time.sleep(30)
+            continue
+        break
+
     response.raise_for_status()
     return response.json()["candidates"][0]["content"]["parts"][0]["text"]
 
